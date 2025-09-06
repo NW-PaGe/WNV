@@ -6,6 +6,7 @@ results/
 logs/
 benchmarks/
 *RAxML*
+phylogenetic/data-private/
 
 # Sensitive environment variables
 environment*
@@ -50,3 +51,4 @@ nohup.out
 
 # cluster logs
 slurm-*
+.Rproj.user
