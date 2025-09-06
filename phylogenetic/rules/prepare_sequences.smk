@@ -39,6 +39,5 @@ rule align:
             --output {output.alignment} \
             --fill-gaps \
             --reference-sequence {input.reference} \
-            --remove-reference \
             --nthreads {threads:q} 2>&1 | tee {log}
         """
