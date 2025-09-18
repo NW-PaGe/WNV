@@ -13,16 +13,22 @@ env:
     USE_CONFIG_FILES: "true"
     LOG_LEVEL: "INFO"
 
+    # Optional S3 pull configuration
+    S3_PULL_ENABLED: "false"
+    S3_PULL_BUCKET: ""
+    S3_PULL_PREFIX: ""
+    S3_PULL_DESTINATION: "./data"
+
     # SECURITY: The following variables MUST be set in CodeBuild Environment Variables
     # - BATCH_QUEUE (required)
     # - BATCH_JOB_DEFINITION (required)
-    # - S3_BUCKET (required)
+    # - S3_BUCKET (required for job submission)
 
 phases:
   pre_build:
     commands:
       # Validate required environment variables
-      - echo "🔍 Validating required environment variables..."
+      - echo "Validating required environment variables..."
       - |
         MISSING_VARS=""
         if [ -z "${BATCH_QUEUE}" ]; then
@@ -34,17 +40,33 @@ phases:
         if [ -z "${S3_BUCKET}" ]; then
           MISSING_VARS="${MISSING_VARS} S3_BUCKET"
         fi
-
         if [ -n "${MISSING_VARS}" ]; then
-          echo "❌ ERROR: Missing required environment variables:${MISSING_VARS}"
+          echo "ERROR: Missing required environment variables:${MISSING_VARS}"
           echo "Please set these in your CodeBuild project environment variables:"
           echo "  - BATCH_QUEUE: Your AWS Batch queue name"
           echo "  - BATCH_JOB_DEFINITION: Your AWS Batch job definition name"
           echo "  - S3_BUCKET: Your S3 bucket for Nextstrain jobs"
           exit 1
         fi
+        echo "All required environment variables are set"
 
-        echo "✅ All required environment variables are set"
+      # Optional: Pull files from S3 before build
+      - |
+        if [ "${S3_PULL_ENABLED}" = "true" ]; then
+          echo "Pulling files from S3..."
+          echo "  Source: s3://${S3_PULL_BUCKET}/${S3_PULL_PREFIX}"
+          echo "  Destination: ${S3_PULL_DESTINATION}"
+          mkdir -p "${S3_PULL_DESTINATION}"
+          if [ -n "${S3_PULL_PREFIX}" ]; then
+            aws s3 sync "s3://${S3_PULL_BUCKET}/${S3_PULL_PREFIX}" "${S3_PULL_DESTINATION}" --delete
+          else
+            aws s3 sync "s3://${S3_PULL_BUCKET}" "${S3_PULL_DESTINATION}" --delete
+          fi
+          echo "S3 pull completed"
+          ls -la "${S3_PULL_DESTINATION}"
+        else
+          echo "S3 pull disabled (S3_PULL_ENABLED=${S3_PULL_ENABLED})"
+        fi
 
   build:
     commands:
@@ -64,10 +86,8 @@ phases:
       - pwd
       - ls -la
 
-      # Submit build to AWS Batch with environment variables
       - echo "Submitting ${BUILD_ABBREVIATION} build to AWS Batch..."
       - |
-        # Build the nextstrain command dynamically
         NEXTSTRAIN_CMD="nextstrain build"
         NEXTSTRAIN_CMD="${NEXTSTRAIN_CMD} --aws-batch"
         NEXTSTRAIN_CMD="${NEXTSTRAIN_CMD} --detach"
@@ -77,19 +97,15 @@ phases:
         NEXTSTRAIN_CMD="${NEXTSTRAIN_CMD} --aws-batch-job ${BATCH_JOB_DEFINITION}"
         NEXTSTRAIN_CMD="${NEXTSTRAIN_CMD} --aws-batch-s3-bucket ${S3_BUCKET}"
         NEXTSTRAIN_CMD="${NEXTSTRAIN_CMD} ${BUILD_TARGET}"
-
-        # Add config files only if USE_CONFIG_FILES is true and CONFIG_FILES is not empty
         if [ "${USE_CONFIG_FILES}" = "true" ] && [ -n "${CONFIG_FILES}" ]; then
           NEXTSTRAIN_CMD="${NEXTSTRAIN_CMD} --configfile ${CONFIG_FILES}"
           echo "Using config files: ${CONFIG_FILES}"
         else
           echo "No config files specified or USE_CONFIG_FILES is false"
         fi
-
-        # Execute the command
         echo "Executing: ${NEXTSTRAIN_CMD}"
         eval ${NEXTSTRAIN_CMD}
 
-      - echo "✅ ${BUILD_ABBREVIATION} build submitted successfully to AWS Batch!"
+      - echo "Build submitted successfully to AWS Batch!"
       - echo "Build submission completed. Check AWS Batch console for job progress."
       - echo "Monitor at: https://console.aws.amazon.com/batch/v2/home#queues/detail/${BATCH_QUEUE}"
