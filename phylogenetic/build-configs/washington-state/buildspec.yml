@@ -9,24 +9,9 @@ phases:
       - pwd
       - ls -la
 
-      # Navigate to correct directory (since buildspec is in a subdirectory)
-      - echo "Navigating to repository root..."
-      - cd ../../../
-      - pwd
-      - ls -la
-      
       # Submit build to AWS Batch
       - echo "Submitting WNV build to AWS Batch..."
-      - nextstrain build \
-          --aws-batch \
-          --aws-batch-cpus 8 \
-          --aws-batch-memory 10240 \
-          --aws-batch-queue nextstrain-job-queue-2 \
-          --aws-batch-job nextstrain-job \
-          --aws-batch-s3-bucket wamep-nextstrain-jobs \
-          phylogenetic \
-          --configfile build-configs/nextstrain-automation/config.yaml \
-          build-configs/washington-state/config.yaml
+      - nextstrain build --aws-batch --aws-batch-cpus 8 --aws-batch-memory 10240 --aws-batch-queue nextstrain-job-queue-2 --aws-batch-job nextstrain-job --aws-batch-s3-bucket wamep-nextstrain-jobs phylogenetic --configfile build-configs/nextstrain-automation/config.yaml build-configs/washington-state/config.yaml
 
       - echo "✅ WNV build submitted successfully to AWS Batch!"
 
