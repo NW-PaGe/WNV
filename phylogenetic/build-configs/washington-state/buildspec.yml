@@ -4,11 +4,17 @@ phases:
     commands:
       - echo "Starting West Nile Virus Nextstrain build..."
 
-      # Clone your WNV repository
-      - echo "Cloning WNV repository from ${REPO_URL:-https://github.com/NW-PaGe/WNV.git}..."
-      - git clone "${REPO_URL:-https://github.com/NW-PaGe/WNV.git}" .
+      # Repository is already cloned by CodeBuild
+      - echo "Repository already cloned by CodeBuild. Current contents:"
+      - pwd
       - ls -la
 
+      # Navigate to correct directory (since buildspec is in a subdirectory)
+      - echo "Navigating to repository root..."
+      - cd ../../../
+      - pwd
+      - ls -la
+      
       # Submit build to AWS Batch
       - echo "Submitting WNV build to AWS Batch..."
       - nextstrain build \
