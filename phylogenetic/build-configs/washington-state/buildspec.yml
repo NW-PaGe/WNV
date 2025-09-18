@@ -5,8 +5,8 @@ phases:
       - echo "Starting West Nile Virus Nextstrain build..."
 
       # Clone your WNV repository
-      - echo "Cloning WNV repository from ${REPO_URL:-https://github.com/your-org/wnv-repo.git}..."
-      - git clone "${REPO_URL:-https://github.com/your-org/wnv-repo.git}" .
+      - echo "Cloning WNV repository from ${REPO_URL:-https://github.com/NW-PaGe/WNV.git}..."
+      - git clone "${REPO_URL:-https://github.com/NW-PaGe/WNV.git}" .
       - ls -la
 
       # Submit build to AWS Batch
