@@ -1,0 +1,28 @@
+version: 0.2
+phases:
+  build:
+    commands:
+      - echo "Starting West Nile Virus Nextstrain build..."
+
+      # Clone your WNV repository
+      - echo "Cloning WNV repository from ${REPO_URL:-https://github.com/your-org/wnv-repo.git}..."
+      - git clone "${REPO_URL:-https://github.com/your-org/wnv-repo.git}" .
+      - ls -la
+
+      # Submit build to AWS Batch
+      - echo "Submitting WNV build to AWS Batch..."
+      - nextstrain build \
+          --aws-batch \
+          --aws-batch-cpus 8 \
+          --aws-batch-memory 10240 \
+          --aws-batch-queue nextstrain-job-queue-2 \
+          --aws-batch-job nextstrain-job \
+          --aws-batch-s3-bucket wamep-nextstrain-jobs \
+          phylogenetic \
+          --configfile build-configs/nextstrain-automation/config.yaml \
+          build-configs/washington-state/config.yaml
+
+      - echo "✅ WNV build submitted successfully to AWS Batch!"
+
+      # Optional: Get job status
+      - echo "Build submission completed. Check AWS Batch console for job progress."
