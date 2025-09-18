@@ -1,111 +1,26 @@
 version: 0.2
 
-# Environment variables for modular configuration
 env:
   variables:
-    # Non-sensitive defaults (can be overridden)
+    # Basic configuration
     BATCH_CPUS: "8"
     BATCH_MEMORY: "10240"
     BUILD_TARGET: "phylogenetic"
-    BUILD_NAME: "West Nile Virus"
-    BUILD_ABBREVIATION: "WNV"
     CONFIG_FILES: "build-configs/nextstrain-automation/config.yaml build-configs/washington-state/config.yaml"
-    USE_CONFIG_FILES: "true"
-    LOG_LEVEL: "INFO"
 
-    # Optional S3 pull configuration
-    S3_PULL_ENABLED: "false"
-    S3_PULL_BUCKET: ""
-    S3_PULL_PREFIX: ""
-    S3_PULL_DESTINATION: "./data"
-
-    # SECURITY: The following variables MUST be set in CodeBuild Environment Variables
-    # - BATCH_QUEUE (required)
-    # - BATCH_JOB_DEFINITION (required)
-    # - S3_BUCKET (required for job submission)
+    # These must be set in CodeBuild environment variables
+    # BATCH_QUEUE: (required)
+    # BATCH_JOB_DEFINITION: (required)
+    # S3_BUCKET: (required)
 
 phases:
-  pre_build:
-    commands:
-      # Validate required environment variables
-      - echo "Validating required environment variables..."
-      - |
-        MISSING_VARS=""
-        if [ -z "${BATCH_QUEUE}" ]; then
-          MISSING_VARS="${MISSING_VARS} BATCH_QUEUE"
-        fi
-        if [ -z "${BATCH_JOB_DEFINITION}" ]; then
-          MISSING_VARS="${MISSING_VARS} BATCH_JOB_DEFINITION"
-        fi
-        if [ -z "${S3_BUCKET}" ]; then
-          MISSING_VARS="${MISSING_VARS} S3_BUCKET"
-        fi
-        if [ -n "${MISSING_VARS}" ]; then
-          echo "ERROR: Missing required environment variables:${MISSING_VARS}"
-          echo "Please set these in your CodeBuild project environment variables:"
-          echo "  - BATCH_QUEUE: Your AWS Batch queue name"
-          echo "  - BATCH_JOB_DEFINITION: Your AWS Batch job definition name"
-          echo "  - S3_BUCKET: Your S3 bucket for Nextstrain jobs"
-          exit 1
-        fi
-        echo "All required environment variables are set"
-
-      # Optional: Pull files from S3 before build
-      - |
-        if [ "${S3_PULL_ENABLED}" = "true" ]; then
-          echo "Pulling files from S3..."
-          echo "  Source: s3://${S3_PULL_BUCKET}/${S3_PULL_PREFIX}"
-          echo "  Destination: ${S3_PULL_DESTINATION}"
-          mkdir -p "${S3_PULL_DESTINATION}"
-          if [ -n "${S3_PULL_PREFIX}" ]; then
-            aws s3 sync "s3://${S3_PULL_BUCKET}/${S3_PULL_PREFIX}" "${S3_PULL_DESTINATION}" --delete
-          else
-            aws s3 sync "s3://${S3_PULL_BUCKET}" "${S3_PULL_DESTINATION}" --delete
-          fi
-          echo "S3 pull completed"
-          ls -la "${S3_PULL_DESTINATION}"
-        else
-          echo "S3 pull disabled (S3_PULL_ENABLED=${S3_PULL_ENABLED})"
-        fi
-
   build:
     commands:
-      - echo "Starting ${BUILD_NAME} Nextstrain build..."
-      - echo "Configuration:"
-      - echo "  CPUs: ${BATCH_CPUS}"
-      - echo "  Memory: ${BATCH_MEMORY} MB"
-      - echo "  Queue: ${BATCH_QUEUE}"
-      - echo "  Job Definition: ${BATCH_JOB_DEFINITION}"
-      - echo "  S3 Bucket: ${S3_BUCKET}"
-      - echo "  Build Target: ${BUILD_TARGET}"
-      - echo "  Config Files: ${CONFIG_FILES}"
-      - echo "  Use Config Files: ${USE_CONFIG_FILES}"
-
-      # Repository is already cloned by CodeBuild
+      - echo "Starting West Nile Virus Nextstrain build..."
       - echo "Repository already cloned by CodeBuild. Current contents:"
       - pwd
       - ls -la
-
-      - echo "Submitting ${BUILD_ABBREVIATION} build to AWS Batch..."
-      - |
-        NEXTSTRAIN_CMD="nextstrain build"
-        NEXTSTRAIN_CMD="${NEXTSTRAIN_CMD} --aws-batch"
-        NEXTSTRAIN_CMD="${NEXTSTRAIN_CMD} --detach"
-        NEXTSTRAIN_CMD="${NEXTSTRAIN_CMD} --aws-batch-cpus ${BATCH_CPUS}"
-        NEXTSTRAIN_CMD="${NEXTSTRAIN_CMD} --aws-batch-memory ${BATCH_MEMORY}"
-        NEXTSTRAIN_CMD="${NEXTSTRAIN_CMD} --aws-batch-queue ${BATCH_QUEUE}"
-        NEXTSTRAIN_CMD="${NEXTSTRAIN_CMD} --aws-batch-job ${BATCH_JOB_DEFINITION}"
-        NEXTSTRAIN_CMD="${NEXTSTRAIN_CMD} --aws-batch-s3-bucket ${S3_BUCKET}"
-        NEXTSTRAIN_CMD="${NEXTSTRAIN_CMD} ${BUILD_TARGET}"
-        if [ "${USE_CONFIG_FILES}" = "true" ] && [ -n "${CONFIG_FILES}" ]; then
-          NEXTSTRAIN_CMD="${NEXTSTRAIN_CMD} --configfile ${CONFIG_FILES}"
-          echo "Using config files: ${CONFIG_FILES}"
-        else
-          echo "No config files specified or USE_CONFIG_FILES is false"
-        fi
-        echo "Executing: ${NEXTSTRAIN_CMD}"
-        eval ${NEXTSTRAIN_CMD}
-
-      - echo "Build submitted successfully to AWS Batch!"
+      - echo "Submitting WNV build to AWS Batch..."
+      - nextstrain build --aws-batch --detach --aws-batch-cpus ${BATCH_CPUS} --aws-batch-memory ${BATCH_MEMORY} --aws-batch-queue ${BATCH_QUEUE} --aws-batch-job ${BATCH_JOB_DEFINITION} --aws-batch-s3-bucket ${S3_BUCKET} ${BUILD_TARGET} --configfile ${CONFIG_FILES}
+      - echo "WNV build submitted successfully to AWS Batch!"
       - echo "Build submission completed. Check AWS Batch console for job progress."
-      - echo "Monitor at: https://console.aws.amazon.com/batch/v2/home#queues/detail/${BATCH_QUEUE}"
