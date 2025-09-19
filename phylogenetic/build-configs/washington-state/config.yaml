@@ -24,24 +24,24 @@ build_params:
     root: "AF481864"
 
     subsample:
+      defaults:
+        min_length: 8200
+        include: ../nextclade/defaults/include.txt
       samples:
         state:
           query: state == 'WA'
-          min_length: 8200
           max_sequences: 5000
         neighboring_state:
           query: state in ['CA', 'ID', 'OR', 'NV']
           group_by:
             - state
             - year
-          min_length: 8200
           max_sequences: 5000
         region:
           query: state in ['AZ','NM', 'CO', 'UT', 'WY', 'MT']
           group_by:
             - state
             - year
-          min_length: 8200
           max_sequences: 5000
         country:
           query: country == 'USA' and state not in ['WA', 'CA', 'ID', 'OR', 'NV','AZ','NM', 'CO', 'UT', 'WY', 'MT'] and accession != 'NC_009942'
@@ -49,10 +49,6 @@ build_params:
             - state
             - year
           max_sequences: 300
-          min_length: 8200
-        force_include:
-          exclude_all: true
-          include: ../nextclade/defaults/include.txt
 
     refine:
       treetime_params: --coalescent opt --clock-filter-iqd 4 --date-inference marginal --date-confidence --clock-rate 0.000653
