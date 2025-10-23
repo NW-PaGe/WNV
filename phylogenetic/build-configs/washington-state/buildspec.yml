@@ -41,7 +41,7 @@ phases:
 
       - echo "Checking files"
       - ls
-      
+
       - echo "Checking that auspice output was retrieved "
       - ls ${BUILD_TARGET}/auspice/
 
@@ -49,6 +49,6 @@ phases:
       - nextstrain login --no-prompt
 
       - echo "Uploading results to Nextstrain..."
-      - nextstrain remote upload nextstrain.org/groups/wadoh-private auspice_jsons/*.json
+      - nextstrain remote upload nextstrain.org/groups/wadoh-private ${BUILD_TARGET}/auspice/*.json
 
       - echo "Build and upload completed successfully!"
