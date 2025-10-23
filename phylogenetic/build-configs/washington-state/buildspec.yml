@@ -100,9 +100,3 @@ phases:
 
       - echo "Uploading results to ${NEXTSTRAIN_GROUP}..."
       - nextstrain remote upload ${NEXTSTRAIN_GROUP} ${BUILD_TARGET}/auspice/*.json
-
-      - echo "========================================="
-      - echo "${BUILD_NAME} Build Complete!"
-      - echo "Job ID: ${BATCH_JOB_ID}"
-      - echo "Results uploaded to: ${NEXTSTRAIN_GROUP}"
-      - echo "========================================="
