@@ -40,8 +40,10 @@ phases:
       - mkdir -p auspice_jsons
 
       - echo "Downloading results from completed Batch job..."
-      - nextstrain build --aws-batch --attach ${BATCH_JOB_ID} --download auspice/*.json auspice_jsons/
+      - nextstrain build --aws-batch --attach ${BATCH_JOB_ID} --download phylogenetic/auspice/*.json auspice_jsons/
 
+      - echo "Checking that auspice output was retrieved "
+      - ls auspice_jsons/
       - echo "Logging into Nextstrain..."
       - nextstrain login --no-prompt
 
