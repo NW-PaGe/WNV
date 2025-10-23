@@ -36,14 +36,15 @@ phases:
 
         echo "Batch job completed with Job ID: ${BATCH_JOB_ID}"
 
-      - echo "Creating auspice_jsons directory..."
-      - mkdir -p auspice_jsons
-
       - echo "Downloading results from completed Batch job..."
-      - nextstrain build --aws-batch --attach ${BATCH_JOB_ID} --download ${BUILD_TARGET}/auspice/*.json auspice_jsons/
+      - nextstrain build --aws-batch --attach ${BATCH_JOB_ID} --download ${BUILD_TARGET}/auspice/*.json .
 
+      - echo "Checking files"
+      - ls
+      
       - echo "Checking that auspice output was retrieved "
-      - ls auspice_jsons/
+      - ls ${BUILD_TARGET}/auspice/
+
       - echo "Logging into Nextstrain..."
       - nextstrain login --no-prompt
 
