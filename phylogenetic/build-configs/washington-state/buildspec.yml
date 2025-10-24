@@ -50,9 +50,7 @@ env:
 phases:
   build:
     commands:
-      - echo "========================================="
       - echo "Starting ${BUILD_NAME} Nextstrain Build"
-      - echo "========================================="
 
       - echo "Repository contents:"
       - pwd
