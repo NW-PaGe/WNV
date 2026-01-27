@@ -3,8 +3,8 @@ This part of the workflow subsamples sequences for constructing the phylogenetic
 
 REQUIRED INPUTS:
 
-    metadata   = input_metadata (defined by merge_additional_inputs.smk)
-    sequences  = input_sequences (defined by merge_additional_inputs.smk)
+    metadata   = results/metadata.tsv
+    sequences  = results/sequences.fasta
 
 OUTPUTS:
 
@@ -20,9 +20,9 @@ See Augur's usage docs for these commands for more details.
 
 rule subsample:
     input:
-        sequences = input_sequences,
-        metadata = input_metadata,
-        config = RUN_CONFIG,
+        sequences = "results/sequences.fasta",
+        metadata = "results/metadata.tsv",
+        config = "results/run_config.yaml",
     output:
         sequences = "results/{build}/sequences_filtered.fasta",
         metadata = "results/{build}/metadata_filtered.tsv",
