@@ -4,6 +4,7 @@ We use this CHANGELOG to document breaking changes, new features, bug fixes, and
 
 ## 2025
 
+* 25 February 2026: Changes to files referenced in `subsample` config will trigger a re-run of the rule. [PR #116](https://github.com/nextstrain/WNV/pull/116) @victorlin
 * 25 February 2026: Changes to non-subsampling config will no longer trigger a re-run starting from subsampling. [PR #116](https://github.com/nextstrain/WNV/pull/116) @victorlin
 * 29 September 2025: The `inputs` configuration now generally supports any of the compression formats that are supported by [`augur read-file`](https://docs.nextstrain.org/projects/augur/page/usage/cli/read-file.html). [PR #110](https://github.com/nextstrain/WNV/pull/110) @victorlin
 * 22 September 2025: The path for configuration resolved at run time has been updated to `results/run_config.yaml`. [PR #96](https://github.com/nextstrain/WNV/pull/96) @victorlin

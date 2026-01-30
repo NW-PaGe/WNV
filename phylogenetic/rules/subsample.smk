@@ -17,12 +17,14 @@ This part of the workflow usually includes one or more of the following steps:
 
 See Augur's usage docs for these commands for more details.
 """
+from augur.subsample import get_referenced_files
 
 rule subsample:
     input:
         sequences = "results/sequences.fasta",
         metadata = "results/metadata.tsv",
         config = "results/{build}/subsample_config.yaml",
+        referenced_files = lambda w: get_referenced_files(f"results/{w.build}/subsample_config.yaml"),
     output:
         sequences = "results/{build}/sequences_filtered.fasta",
         metadata = "results/{build}/metadata_filtered.tsv",
