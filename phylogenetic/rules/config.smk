@@ -10,6 +10,7 @@ from textwrap import dedent
 
 def main():
     validate_config()
+    write_subsample_config()
     write_config("results/run_config.yaml")
 
 
@@ -45,6 +46,12 @@ def validate_config():
 
                     <https://docs.nextstrain.org/projects/augur/en/stable/usage/cli/subsample.html#configuration>"""))
             exit(1)
+
+
+def write_subsample_config():
+    for build in config["build_params"]:
+        section = ["build_params", build, "subsample"]
+        write_config(f"results/{build}/subsample_config.yaml", section=section)
 
 
 def indented_list(xs, prefix):
