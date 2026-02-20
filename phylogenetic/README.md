@@ -34,7 +34,7 @@ Any desired data formatting and curations should be done as part of the [ingest]
 
 The first step in the phylogenetic workflow is to subsample (or filter) the data. The subsampling criteria are specified in the 
 phylogenetic/config/defaults.yaml file. The criteria are then executed in the Snakefile using wildcards and an input function. 
-Documentation about subsampling can be found here [filtering and subsampling] (https://docs.nextstrain.org/en/latest/guides/bioinformatics/filtering-and-subsampling.html#subsampling-within-augur-filter)
+Documentation about subsampling can be found here [filtering and subsampling](https://docs.nextstrain.org/en/latest/guides/bioinformatics/filtering-and-subsampling.html#subsampling-within-augur-filter)
 
 
 ## Defaults
