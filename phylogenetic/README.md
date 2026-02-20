@@ -61,6 +61,18 @@ in the main Snakefile in the order that they are expected to run.
 The build-configs directory contains custom configs and rules that override and/or
 extend the default workflow.
 
-- [ci](build-configs/ci/) - CI build that runs with example data
+- [chores](build-configs/chores/) - chores that are run separately from the main workflow
+- [ci](build-configs/ci/) - [CI][] build that runs with [example data][]
 
+## Update example data
+
+[example data][] should be updated occasionally. To update, run:
+
+```bash
+nextstrain build . update_example_data -F \
+    --configfiles defaults/config.yaml build-configs/chores/config.yaml
+```
+
+[CI]: https://github.com/nextstrain/WNV/actions/workflows/ci.yaml
+[example data]: ./example_data/
 [Nextstrain datasets]: https://docs.nextstrain.org/en/latest/reference/glossary.html#term-dataset
