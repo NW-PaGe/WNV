@@ -17,12 +17,14 @@ This part of the workflow usually includes one or more of the following steps:
 
 See Augur's usage docs for these commands for more details.
 """
+from augur.subsample import get_referenced_files
 
 rule subsample:
     input:
         sequences = "results/sequences.fasta",
         metadata = "results/metadata.tsv",
-        config = "results/run_config.yaml",
+        config = "results/{build}/subsample_config.yaml",
+        referenced_files = lambda w: get_referenced_files(f"results/{w.build}/subsample_config.yaml"),
     output:
         sequences = "results/{build}/sequences_filtered.fasta",
         metadata = "results/{build}/metadata_filtered.tsv",
@@ -32,7 +34,6 @@ rule subsample:
         "benchmarks/{build}/subsample.txt",
     params:
         id_column = config["strain_id_field"],
-        config_section = lambda w: ["build_params", w.build, "subsample"]
     threads: workflow.cores
     shell:
         """
@@ -41,7 +42,6 @@ rule subsample:
             --metadata {input.metadata} \
             --metadata-id-columns {params.id_column} \
             --config {input.config} \
-            --config-section {params.config_section:q} \
             --nthreads {threads} \
             --output-sequences {output.sequences} \
             --output-metadata {output.metadata} 2>&1 | tee {log}

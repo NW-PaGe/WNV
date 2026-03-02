@@ -12,7 +12,6 @@ Produces final output as
     sequences_ndjson = "data/sequences.ndjson"
 
 """
-workflow.global_resources.setdefault("concurrent_deploys", 2)
 
 rule fetch_ncbi_dataset_package:
     output:
