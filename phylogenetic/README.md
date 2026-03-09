@@ -1,7 +1,11 @@
 # Phylogenetic
 
-This workflow uses WNV metadata and sequences to produce one [Nextstrain datasets][]
+This workflow uses already-curated WNV metadata and sequences to produce [Nextstrain datasets][]
 that can be visualized in Auspice.
+By default the curated data is sourced from our public S3 bucket and produces three analyses:
+1. all-lineages (`auspice/WNV_all-lineages.json`)
+2. Lineage 1A (`auspice/WNV_lineage-1A.json`)
+3. Lineage 2 (`auspice/WNV_lineage-2.json`)
 
 ## Workflow Usage
 

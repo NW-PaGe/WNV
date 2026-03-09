@@ -3,7 +3,7 @@
 This repository contains three workflows for the analysis of West Nile virus data:
 
 - [`ingest/`](./ingest) - Download data from GenBank, clean and curate it
-- [`phylogenetic/`](./phylogenetic) - Filter sequences, align, construct phylogeny and export for visualization
+- [`phylogenetic/`](./phylogenetic) - Workflow which produces JSONs for visualisation in Auspice
 - [`nextclade/`](./nextclade) - Create nextclade datasets
 
 Each folder contains a README.md with more information. The results of running both workflows are publicly visible at [nextstrain.org/WNV](https://nextstrain.org/WNV).
@@ -11,15 +11,6 @@ Each folder contains a README.md with more information. The results of running b
 ## Installation
 
 Follow the [standard installation instructions](https://docs.nextstrain.org/en/latest/install.html) for Nextstrain's suite of software tools.
-
-## Quickstart
-
-Run the default phylogenetic workflow via:
-```
-cd phylogenetic/
-nextstrain build .
-nextstrain view .
-```
 
 ## Documentation
 
