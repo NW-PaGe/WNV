@@ -2,6 +2,10 @@
 
 We use this CHANGELOG to document breaking changes, new features, bug fixes, and config value changes that may affect both the usage of the workflows and the outputs of the workflows.
 
+## 2026
+
+* 9 March 2026: Added date annotations to some sequences from 1998 and 1999. [PR #120](https://github.com/nextstrain/WNV/pull/120) @victorlin
+
 ## 2025
 
 * 25 February 2026: Changes to files referenced in `subsample` config will trigger a re-run of the rule. [PR #116](https://github.com/nextstrain/WNV/pull/116) @victorlin
