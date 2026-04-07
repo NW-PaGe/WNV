@@ -25,6 +25,10 @@
 
 ## Getting Started
 Some high-level features and capabilities specific to this build include:
+=======
+- [`ingest/`](./ingest) - Download data from GenBank, clean and curate it
+- [`phylogenetic/`](./phylogenetic) - Workflow which produces JSONs for visualisation in Auspice
+- [`nextclade/`](./nextclade) - Create nextclade datasets
 
 - **Lineage Designation:** We use [Pathoplexus](https://pathoplexus.org/) for clade calling based off of a Nextclade dataset in this [PR](https://github.com/nextstrain/nextclade_data/pull/197)
 - **Subsampling:** The WNV Washington Focused Build uses a tiered subsampling strategy which allows for filtering NCBI data based on geographic location. The subsampling criteria in the WNV Washington Focused Build is set to select all sequences from Washington, neighboring states, and region, up to a maximum of 5,000 sequences. Additionally, up to 300 sequences are randomly selected from other states. These criteria can be modified as needed.
@@ -141,3 +145,7 @@ For any questions please submit them to our [Discussions](insert link here) page
 ## Acknowledgements
 
 *[add acknowledgements to those who have contributed to this work]*
+=======
+## Documentation
+
+- [Running a pathogen workflow](https://docs.nextstrain.org/en/latest/tutorials/running-a-workflow.html)
