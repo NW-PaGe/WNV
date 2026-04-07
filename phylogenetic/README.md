@@ -1,7 +1,11 @@
 # Phylogenetic
 
-This workflow uses WNV metadata and sequences to produce one [Nextstrain datasets][]
+This workflow uses already-curated WNV metadata and sequences to produce [Nextstrain datasets][]
 that can be visualized in Auspice.
+By default the curated data is sourced from our public S3 bucket and produces three analyses:
+1. all-lineages (`auspice/WNV_all-lineages.json`)
+2. Lineage 1A (`auspice/WNV_lineage-1A.json`)
+3. Lineage 2 (`auspice/WNV_lineage-2.json`)
 
 ## Workflow Usage
 
@@ -34,7 +38,7 @@ Any desired data formatting and curations should be done as part of the [ingest]
 
 The first step in the phylogenetic workflow is to subsample (or filter) the data. The subsampling criteria are specified in the 
 phylogenetic/config/defaults.yaml file. The criteria are then executed in the Snakefile using wildcards and an input function. 
-Documentation about subsampling can be found here [filtering and subsampling] (https://docs.nextstrain.org/en/latest/guides/bioinformatics/filtering-and-subsampling.html#subsampling-within-augur-filter)
+Documentation about subsampling can be found here [filtering and subsampling](https://docs.nextstrain.org/en/latest/guides/bioinformatics/filtering-and-subsampling.html#subsampling-within-augur-filter)
 
 
 ## Defaults
@@ -61,6 +65,18 @@ in the main Snakefile in the order that they are expected to run.
 The build-configs directory contains custom configs and rules that override and/or
 extend the default workflow.
 
-- [ci](build-configs/ci/) - CI build that runs with example data
+- [chores](build-configs/chores/) - chores that are run separately from the main workflow
+- [ci](build-configs/ci/) - [CI][] build that runs with [example data][]
 
+## Update example data
+
+[example data][] should be updated occasionally. To update, run:
+
+```bash
+nextstrain build . update_example_data -F \
+    --configfiles defaults/config.yaml build-configs/chores/config.yaml
+```
+
+[CI]: https://github.com/nextstrain/WNV/actions/workflows/ci.yaml
+[example data]: ./example_data/
 [Nextstrain datasets]: https://docs.nextstrain.org/en/latest/reference/glossary.html#term-dataset
