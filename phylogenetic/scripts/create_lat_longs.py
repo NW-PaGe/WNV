@@ -78,35 +78,40 @@ for key, value in states.items():
 ## DIVISIONS
 
 # step 1: quick check to make sure there are no divisions of the same name in different states
-div_state = {} # example: { "New York City": "NY" }
+div_state = {}
 for x in metadata:
   div = x["location"]
-  if div not in ("Unknown",""):
+  region_key = x["state"] if x["state"] not in ("", "Unknown") else x["country"]
+  if div not in ("Unknown", ""):
     if div in div_state:
-      if div_state[div] != x["state"]:
-        print("PROBLEM! {} - {} & {}".format(x["state"], div, div_state[div]))
+      if div_state[div] != region_key:
+        print("PROBLEM! {} - {} & {}".format(region_key, div, div_state[div]))
     else:
-      div_state[div] = x["state"]
+      div_state[div] = region_key
 
 # step 2: what are all the divisions and their corresponding GPS co-ords?
-divisions_gps = defaultdict(lambda: []) # example: { "NY/New York City": [ [40.7128, -74.0060], [40, -74] ] }
+divisions_gps = defaultdict(lambda: [])
 for x in metadata:
   if x["location"] not in ("Unknown", ""):
-      #print("lat longs! {} - {} - {}".format(x["division"],x["latitude"], x["longitude"]))
-    divisions_gps[x['state'] + "/" + x["location"]].append( [ x["latitude"], x["longitude"] ] )
+    # Use state if available, otherwise fall back to country
+    region_key = x["state"] if x["state"] not in ("", "Unknown") else x["country"]
+    divisions_gps[region_key + "/" + x["location"]].append([x["latitude"], x["longitude"]])
 
 # step 3: average the lat/longs:
-divisions = {} # example: { "New York City": [40.7128, -74.0060] }
+divisions = {}
 for key, values in divisions_gps.items():
   ll = list(filter(lambda x: "Unknown" not in x and "XXX" not in x and "" not in x, values))
+  region = key.split("/")[0]  # state (e.g. "WA") or country (e.g. "Mexico")
+  loc = key.split("/")[1]     # location name
+
   if len(ll) == 0:
-    # no lat longs for these isolates, fall back to state instead
-    state = key.split("/")[0] # example: "NY"
-    loc = key.split("/")[1] # example: "New York City"
-    divisions[loc] = states[state]
+    # no GPS in metadata — fall back to region centroid
+    if region in states:
+      divisions[loc] = states[region]
+    else:
+      print(f"WARNING: No GPS data and no known centroid for region '{region}', location '{loc}' — skipping.")
   else:
-    loc = key.split("/")[1] # example: "New York City"
-    divisions[loc] = ( np.mean([float(x[0]) for x in ll]), np.mean([float(x[1]) for x in ll]) )
+    divisions[loc] = (np.mean([float(x[0]) for x in ll]), np.mean([float(x[1]) for x in ll]))
 
 for key, value in divisions.items():
   f.write("{}\t{}\t{}\t{}\n".format("location", key, value[0], value[1]))
