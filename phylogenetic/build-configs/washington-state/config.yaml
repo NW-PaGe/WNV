@@ -38,7 +38,7 @@ build_params:
             - year
           max_sequences: 5000
         region:
-          query: state in ['AZ','NM', 'CO', 'UT', 'WY', 'MT']
+          query: state in ['AZ','NM', 'CO', 'UT', 'WY', 'MT','AK']
           group_by:
             - state
             - year
@@ -49,6 +49,9 @@ build_params:
             - state
             - year
           max_sequences: 300
+        northamerica:
+          query: country in ['Canada','Mexico']
+          max_sequences: 5000       
 
     refine:
       treetime_params: --coalescent opt --clock-filter-iqd 4 --date-inference marginal --date-confidence --clock-rate 0.000653
